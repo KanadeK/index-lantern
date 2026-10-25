@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "index-lantern"
-version = "0.1.0"
+version = "0.1.1"
 description = "Inspect raw differences hidden behind Git index flags"
 readme = "README.md"
 requires-python = ">=3.11"

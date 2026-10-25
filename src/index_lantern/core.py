@@ -50,7 +50,9 @@ def checked_path(root: Path, relative: str) -> Path:
             info = parent.lstat()
         except FileNotFoundError:
             return candidate
-        if stat.S_ISLNK(info.st_mode) or getattr(parent, 'is_junction', lambda: False)():
+        reparse = getattr(info, 'st_file_attributes', 0) & getattr(
+            stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0)
+        if stat.S_ISLNK(info.st_mode) or reparse:
             raise AuditError('Parent is a symlink or junction; path not followed')
         if not stat.S_ISDIR(info.st_mode):
             raise AuditError('Parent is not a directory')
@@ -73,8 +75,10 @@ def inspect_entry(root: Path, entry: dict, algorithm: str, max_bytes: int) -> di
             result['state'] = ('absent-skipped' if 'skip-worktree' in entry['flags']
                                else 'missing-assumed')
             return result
-        if getattr(path, 'is_junction', lambda: False)():
-            raise AuditError('Junction not followed')
+        reparse = getattr(before, 'st_file_attributes', 0) & getattr(
+            stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0)
+        if reparse and not stat.S_ISLNK(before.st_mode):
+            raise AuditError('Windows reparse point not followed')
         if stat.S_ISLNK(before.st_mode):
             if entry['mode'] != '120000':
                 result['state'] = 'type-changed'

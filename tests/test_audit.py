@@ -183,6 +183,18 @@ class AuditTests(unittest.TestCase):
         os.symlink(self.repo, self.repo / 'dir')
         self.assertEqual(self.entry()['state'], 'not-inspected')
 
+    @unittest.skipUnless(os.name == 'nt', 'Real Windows junction fixture')
+    def test_windows_parent_junction_not_followed(self):
+        self.add('dir/file')
+        (self.repo / 'dir/file').unlink()
+        (self.repo / 'dir').rmdir()
+        target = self.repo / 'junction-target'
+        target.mkdir()
+        (target / 'file').write_bytes(b'outside-tracked-directory')
+        subprocess.run(['cmd', '/c', 'mklink', '/J', str(self.repo / 'dir'), str(target)],
+                       check=True, capture_output=True)
+        self.assertEqual(self.entry()['state'], 'not-inspected')
+
     @unittest.skipIf(os.name == 'nt', 'Real POSIX symlink fixture runs in Linux CI')
     def test_symlink_target_comparison(self):
         os.symlink('absent-target', self.repo / 'link')

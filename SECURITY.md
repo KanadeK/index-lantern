@@ -1,6 +1,6 @@
 # Security
 
-Supported version: 0.1.x. Use this tool on repository data you are authorized to
+Supported version: 0.1.1 and later in 0.1.x. Use this tool on repository data you are authorized to
 inspect. Reports can contain ref names, path names and object IDs; review them
 before publishing. File contents, credentials and telemetry are never intentionally
 sent. This is a diagnostic utility, not a sandbox for hostile Git repositories or

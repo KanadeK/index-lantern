@@ -8,6 +8,9 @@ checkout to someone else. The tool leaves the index, flags and worktree untouche
 
 Python 3.11+, Git 2.43+, no Python runtime dependencies. [中文](README.zh-CN.md)
 
+Current version: **0.1.1**. Windows users should use this patch release or later
+for junction detection on Python 3.11.
+
 ## Install and try
 
 ```sh
